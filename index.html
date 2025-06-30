@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LW Portfolio</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #e8f4f8 0%, #f3f0f7 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        .section {
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+            text-align: center;
+        }
+
+        .section-description {
+            text-align: center;
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2rem;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #c3a6d1, #a8d8ea);
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+            border: 2px dashed #e9ecef;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Special styling for the F1 chart iframe */
+        /* Special styling for the F1 chart iframe */
+        .f1-chart-container {
+            width: 100%;
+            height: 400px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e9ecef;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .f1-chart-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        /* Gallery styling for airport, carter, and mental health projects */
+        .airport-gallery, .carter-gallery, .mh-gallery {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+
+        .gallery-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gallery-slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gallery-slide.active {
+            display: block;
+        }
+
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .gallery-prev, .gallery-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .gallery-prev:hover, .gallery-next:hover {
+            background: rgba(0,0,0,0.8);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .gallery-prev {
+            left: 10px;
+        }
+
+        .gallery-next {
+            right: 10px;
+        }
+
+        .gallery-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* Athena's Warehouse chart styling */
+        .athena-chart-container {
+            width: 100%;
+            height: 350px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            padding: 1rem;
+            border: 1px solid #e9ecef;
+        }
+
+        .chart-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #EBCDE7;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        /* ChopChop video styling */
+        .chopchop-video-container {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+
+        .project-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            border-radius: 12px;
+        }
+
+        .project-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .project-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tech-tag:nth-child(odd) { 
+            background: #c3a6d1; 
+        }
+        .tech-tag:nth-child(even) { 
+            background: #a8d8ea; 
+        }
+
+        .tech-tag {
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #c3a6d1, #a8d8ea);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #333;
+            border: 2px solid #c3a6d1;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .contact-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 3rem;
+        }
+
+        .contact-title {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .contact-info {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-links {
+                flex-direction: column;
+            }
+
+            .f1-chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Lily Wang</h1>
+            <p class="subtitle">NPR Application Portfolio</p>
+        </header>
+       
+        <!-- Data Visualization Section -->
+        <section class="section">
+            <h2 class="section-title">Data Visualization Samples</h2>
+    
+            <div class="projects-grid">
+                <div class="project-card">
+                    <!-- Interactive F1 Plotly Chart via iframe -->
+                    <div class="f1-chart-container">
+                        <iframe src="f1-pitstop-chart.html" class="f1-chart-iframe" title="F1 Pit Stop Analysis"></iframe>
+                    </div>
+                    <h3 class="project-title">F1 Racing Performance Analysis</h3>
+                    <p class="project-description">
+                        Analysis of Formula 1 race results using Python (pandas, numpy, matplotlib, seaborn, plotly, statsmodels). Created interactive Plotly visualizations, 
+                        hexbin plots, and time series analysis to identify factors predicting race outcomes. 
+                        <br><br>
+                        (Statistical Computing II Final Project)
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Animated</span>
+                        <span class="tech-tag">Statistical Analysis</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="F1-Racing-Performance.html" class="btn btn-primary">View Full Project</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="airport-gallery">
+                        <div class="gallery-container">
+                            <div class="gallery-slide active">
+                                <img src="airport1.png" alt="Atlanta Airport Analysis Chart 1">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="airport2.png" alt="Atlanta Airport Analysis Chart 2">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="airport3.png" alt="Atlanta Airport Analysis Chart 3">
+                            </div>
+                            <button class="gallery-prev" onclick="changeSlide(-1, this)">&lt;</button>
+                            <button class="gallery-next" onclick="changeSlide(1, this)">&gt;</button>
+                            <div class="gallery-dots">
+                                <span class="dot active" onclick="currentSlide(1, this)"></span>
+                                <span class="dot" onclick="currentSlide(2, this)"></span>
+                                <span class="dot" onclick="currentSlide(3, this)"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Atlanta Airport Traffic Analysis</h3>
+                    <p class="project-description">
+                        Analysis of flight disruptions from the Atlanta Airport during the pandemic using R (ggplot2, ggmap, dplyr, tidyr, plotly). 
+                        Created geospatial plots of outbound flights from ATL.
+                        <br><br>
+                        (Statistical Computing I Final Project)
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">R</span>
+                        <span class="tech-tag">Geospatial</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="#" class="btn btn-primary">View Project</a>
+                        <a href="#" class="btn btn-secondary">Code</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="athena-chart-container">
+                        <div class="chart-toggle">
+                            <span>Before Athena's</span>
+                            <div class="toggle-switch" onclick="toggleAthenaChart(this)">
+                                <div class="toggle-slider"></div>
+                            </div>
+                            <span>After Athena's</span>
+                        </div>
+                        <canvas id="athenaChart"></canvas>
+                    </div>
+                    <h3 class="project-title">Athena Warehouse | Data Interpreters' Project</h3>
+                    <p class="project-description">
+                        Interactive HTML/JavaScript dashboard for Athena's Warehouse showcasing program impact on young girls. 
+                        Features before/after comparisons across physical health, mental health, career development, and personal safety metrics.
+                        <br><br>
+                        (Volunteer Data Visualization Project)
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Chart.js</span>
+                        <span class="tech-tag">HTML/CSS</span>
+                        <span class="tech-tag">JavaScript</span>
+        
+                    </div>
+                    <div class="project-links">
+                        <a href="aw.html" class="btn btn-primary">View Full Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Machine Learning Section -->
+        <section class="section">
+            <h2 class="section-title">Machine Learning & Research</h2>
+      
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="carter-gallery">
+                        <div class="gallery-container">
+                            <div class="gallery-slide active">
+                                <img src="carter1.png" alt="Carter Center Political Analysis Chart 1">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="carter2.png" alt="Carter Center Political Analysis Chart 2">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="carter3.png" alt="Carter Center Political Analysis Chart 3">
+                            </div>
+                            <button class="gallery-prev" onclick="changeSlide(-1, this)">&lt;</button>
+                            <button class="gallery-next" onclick="changeSlide(1, this)">&gt;</button>
+                            <div class="gallery-dots">
+                                <span class="dot active" onclick="currentSlide(1, this)"></span>
+                                <span class="dot" onclick="currentSlide(2, this)"></span>
+                                <span class="dot" onclick="currentSlide(3, this)"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Political Social Media Analysis</h3>
+                    <p class="project-description">
+                        AI.Data Lab collaboration with Carter Center analyzing political engagement patterns from Junkipedia database. 
+                        Used NLP and machine learning to identify trends in political discourse and audience interaction.
+                        <br><br>
+                        (Emory AI.DATA Lab Research Project)
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">NLP</span>
+                        <span class="tech-tag">Machine Learning</span>
+                        <span class="tech-tag">Junkipedia</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="CarterCenterGroup3-Poster.pdf" class="btn btn-primary" target="_blank">View Poster</a>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="mh-gallery">
+                        <div class="gallery-container">
+                            <div class="gallery-slide active">
+                                <img src="mh1.png" alt="Mental Health Analysis Chart 1">
+                            </div>
+                            <div class="gallery-slide">
+                                <img src="mh2.png" alt="Mental Health Analysis Chart 2">
+                            </div>
+                            <button class="gallery-prev" onclick="changeSlide(-1, this)">&lt;</button>
+                            <button class="gallery-next" onclick="changeSlide(1, this)">&gt;</button>
+                            <div class="gallery-dots">
+                                <span class="dot active" onclick="currentSlide(1, this)"></span>
+                                <span class="dot" onclick="currentSlide(2, this)"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="project-title">Mental Health Data Analysis</h3>
+                    <p class="project-description">
+                        Developed a personalized mental health prediction model using machine learning techniques to identify key factors and trends in healthcare data.<br><br>
+(Machine Learning Final Project <br>*Group project - I contributed by implementing and training the Random Forest classifier shown in the visualizations above)
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">Statistical Modeling</span>
+                        <span class="tech-tag">Machine Learning</span>
+                        <span class="tech-tag">Healthcare</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="CS 334 Final Project.pdf" class="btn btn-primary" target="_blank">View Analysis</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Web Development Section -->
+        <section class="section">
+            <h2 class="section-title">Web Development</h2>
+    
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="chopchop-video-container">
+                        <video controls poster="" class="project-video">
+                            <source src="choptrackonly.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <h3 class="project-title">ChopChop App</h3>
+                    <p class="project-description">
+                        ChopTrack: React-based web page with Firebase backend featuring automatic receipt parsing and archiving, 
+                        budget tracking, grocery expiration tracking, and grocery list.<br><br>
+                    (My component of the CS 370 final project *Group project)
+                    </p>
+                    <div class="tech-tags">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Firebase</span>
+                        <span class="tech-tag">JavaScript</span>
+                        <span class="tech-tag">UI/UX Design</span>
+                    </div>
+                    <div class="project-links">
+                        <a href="ChopChop Documentation (CS 370).pdf" class="btn btn-primary" target="_blank">View Documentation</a>
+                        <a href="https://github.com/lilwaa/ChopChop" class="btn btn-secondary" target="_blank">View Code</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="contact-section">
+            <h2 class="contact-title">Thank you for considering my application!</h2>
+        </div>
+    </div>
+
+    <script>
+        function changeSlide(direction, button) {
+            const gallery = button.closest('.airport-gallery, .carter-gallery, .mh-gallery');
+            const slides = gallery.querySelectorAll('.gallery-slide');
+            const dots = gallery.querySelectorAll('.dot');
+            const activeSlide = gallery.querySelector('.gallery-slide.active');
+            const activeDot = gallery.querySelector('.dot.active');
+            
+            let currentIndex = Array.from(slides).indexOf(activeSlide);
+            let newIndex = currentIndex + direction;
+            
+            if (newIndex >= slides.length) newIndex = 0;
+            if (newIndex < 0) newIndex = slides.length - 1;
+            
+            // Update slides
+            activeSlide.classList.remove('active');
+            slides[newIndex].classList.add('active');
+            
+            // Update dots
+            activeDot.classList.remove('active');
+            dots[newIndex].classList.add('active');
+        }
+        
+        function currentSlide(n, dot) {
+            const gallery = dot.closest('.airport-gallery, .carter-gallery, .mh-gallery');
+            const slides = gallery.querySelectorAll('.gallery-slide');
+            const dots = gallery.querySelectorAll('.dot');
+            
+            // Remove active from all
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+            
+            // Add active to selected
+            slides[n-1].classList.add('active');
+            dots[n-1].classList.add('active');
+        }
+
+        // Add touch/swipe support for mobile
+        let startX = 0;
+        let endX = 0;
+
+        document.addEventListener('touchstart', function(e) {
+            if (e.target.closest('.airport-gallery, .carter-gallery, .mh-gallery')) {
+                startX = e.touches[0].clientX;
+            }
+        });
+
+        document.addEventListener('touchend', function(e) {
+            if (e.target.closest('.airport-gallery, .carter-gallery, .mh-gallery')) {
+                endX = e.changedTouches[0].clientX;
+                handleSwipe(e.target.closest('.airport-gallery, .carter-gallery, .mh-gallery'));
+            }
+        });
+
+        function handleSwipe(gallery) {
+            const threshold = 50;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > threshold) {
+                const button = gallery.querySelector('.gallery-next');
+                if (diff > 0) {
+                    // Swiped left - next slide
+                    changeSlide(1, button);
+                } else {
+                    // Swiped right - previous slide
+                    changeSlide(-1, button);
+                }
+            }
+        }
+
+        // Athena's Warehouse Chart - using actual Physical Health data
+        let athenaChart;
+        let showAfter = false;
+
+        // Actual data from your Athena's Warehouse project
+        const athenaData = {
+            before: [
+                {
+                    label: 'Strongly Disagree',
+                    backgroundColor: "#A379B9",
+                    data: [7, 6, 7, 0, 4, 13],
+                },
+                {
+                    label: 'Disagree',
+                    backgroundColor: "#C693CB",
+                    data: [5, 7, 7, 13, 8, 6],
+                },
+                {
+                    label: 'Neutral',
+                    backgroundColor: "#EBCDE7",
+                    data: [7, 5, 5, 11, 2, 0],
+                },
+                {
+                    label: 'Agree',
+                    backgroundColor: "#EFA7BD",
+                    data: [7, 9, 5, 11, 12, 5],
+                },
+                {
+                    label: 'Strongly Agree',
+                    backgroundColor: "#DC7092",
+                    data: [10, 9, 12, 1, 10, 12],
+                }
+            ],
+            after: [
+                {
+                    label: 'Strongly Disagree',
+                    backgroundColor: "#A379B9",
+                    data: [1, 1, 0, 0, 1, 1],
+                },
+                {
+                    label: 'Disagree',
+                    backgroundColor: "#C693CB",
+                    data: [3, 1, 5, 14, 1, 6],
+                },
+                {
+                    label: 'Neutral',
+                    backgroundColor: "#EBCDE7",
+                    data: [5, 6, 3, 13, 2, 4],
+                },
+                {
+                    label: 'Agree',
+                    backgroundColor: "#EFA7BD",
+                    data: [2, 3, 3, 3, 10, 5],
+                },
+                {
+                    label: 'Strongly Agree',
+                    backgroundColor: "#DC7092",
+                    data: [20, 20, 20, 1, 17, 15],
+                }
+            ]
+        };
+
+        const chartLabels = [
+            "I choose healthy food over fast food", 
+            "I have a positive body image", 
+            "I know how to cook with fresh ingredients", 
+            "I exercise regularly outside of PE class", 
+            "I am happy with my appearance",
+            "I can budget for healthy groceries"
+        ];
+
+        function initAthenaChart() {
+            const ctx = document.getElementById('athenaChart').getContext('2d');
+            athenaChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: athenaData.before
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Makes it horizontal
+                    scales: {
+                        x: {
+                            stacked: true,
+                            ticks: {
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            ticks: {
+                                font: {
+                                    size: 9
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function toggleAthenaChart(toggle) {
+            showAfter = !showAfter;
+            toggle.classList.toggle('active');
+            
+            const newData = showAfter ? athenaData.after : athenaData.before;
+            athenaChart.data.datasets = newData;
+            athenaChart.update('active');
+        }
+
+        // Initialize chart when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initAthenaChart();
+        });
+    </script>
+</body>
+</html>

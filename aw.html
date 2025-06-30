@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Chart.js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    
+    <!--CSS Stylesheet-->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!-- Compiled and minified CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+             
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Athena's Warehouse Data</title>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-grid">
+            <img src="logo.png" class="center">
+        </div>
+        <div class="navbar-grid">
+            <h3 class="navbar-title center">Inner Warrior Transformation</h3>
+        </div>
+
+        
+        
+    </div>
+
+
+    <div class="main">
+        
+        <div class="grid-container">
+            
+            <div class="grid-item2 fitness">
+                <h3 class="cat center">Physical Health</h3>
+                 <!-- Switch -->
+                <div class="switch center">
+                    <label class="cat">
+                    Before Athena's
+                    <input type="checkbox" id="fitnessSwitch">
+                    <span class="lever"></span>
+                    After Athena's
+                    </label>
+                </div>
+                <div class="graphBox">
+                    <div class="box">
+                        <div class='chartContainer'style="position: relative;">
+                            <canvas id="fitness-survey" style="width:100%;max-width:700px"></canvas>
+                        </div>
+                        
+                        
+        
+                    </div>
+        
+                </div>
+
+                
+
+
+            </div>
+            <div class="grid-item mental">
+                <h3 class=" cat center">Mental Health</h3>
+                 <!-- Switch -->
+                <div class="switch center">
+                    <label class="cat">
+                    Before Athena's
+                    <input type="checkbox" id="mentalSwitch">
+                    <span class="lever"></span>
+                    After Athena's
+                    </label>
+                </div>
+                <div class="graphBox">
+                    <div class="box">
+                        <div class='chartContainer'style="position: relative;">
+                            <canvas id="mental-survey" style="width:100%;max-width:700px"></canvas>
+                        </div>
+                        
+                        
+        
+                    </div>
+        
+                </div>
+
+            </div>
+       
+            
+            <div class="grid-item career">
+                <h3 class="cat center">Career Development</h3>
+                 <!-- Switch -->
+                <div class="switch center">
+                    <label class="cat">
+                    Before Athena's
+                    <input type="checkbox" id="careerSwitch">
+                    <span class="lever"></span>
+                    After Athena's
+                    </label>
+                </div>
+                <div class="graphBox">
+                    <div class="box">
+                        <div class='chartContainer'style="position: relative;">
+                            <canvas id="career-survey" style="width:100%;max-width:700px"></canvas>
+                        </div>
+                        
+                        
+        
+                    </div>
+        
+                </div>
+
+
+            </div>
+            <div class="grid-item safety">
+                <h3 class="cat center">Personal Safety</h3>
+                 <!-- Switch -->
+                <div class="switch center">
+                    <label class="cat">
+                    Before Athena's
+                    <input type="checkbox" id="safetySwitch">
+                    <span class="lever"></span>
+                    After Athena's
+                    </label>
+                </div>
+                <div class="graphBox">
+                    <div class="box">
+                        <div class='chartContainer'style="position: relative;">
+                            <canvas id="safety-survey" style="width:100%;max-width:700px"></canvas>
+                        </div>
+                        
+                        
+        
+                    </div>
+        
+                </div>
+
+
+            </div>
+   
+        </div>
+
+
+
+
+
+        
+
+
+
+    </div>
+
+
+
+    <div class='chartContainer'>
+        <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+    </div>
+
+    <!--Link to Javascript-->
+    <script src="aws-data.js"></script> 
+
+    
+</body>
+</html>

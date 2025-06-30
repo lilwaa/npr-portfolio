@@ -1,0 +1,75 @@
+body{
+    background-color: lightgrey;
+}
+.grid-container {
+    display: grid;
+    grid-template-areas: 'fitness mental'
+                        'career safety';
+    gap: 10px;
+    padding: 10px;
+
+}
+
+.grid-item1 {
+    grid-row-start: 1;
+    grid-row-end: 2;
+}
+
+.grid-item2 {
+    grid-row-start: 1;
+    grid-row-end: 1;
+}
+
+#fitnessSwitch:checked + .lever:after {
+    background-color: #632951; /* Replace with your desired color */
+}
+
+#fitnessSwitch:checked + .lever {
+    background-color: #EBCDE7; /* Replace with your desired color */
+}
+
+#mentalSwitch:checked + .lever:after {
+    background-color: #632951; /* Replace with your desired color */
+}
+
+#mentalSwitch:checked + .lever {
+    background-color: #EBCDE7; /* Replace with your desired color */
+}
+#careerSwitch:checked + .lever:after {
+    background-color: #632951; /* Replace with your desired color */
+}
+
+#careerSwitch:checked + .lever {
+    background-color: #EBCDE7; /* Replace with your desired color */
+}
+
+#safetySwitch:checked + .lever:after {
+    background-color: #632951; /* Replace with your desired color */
+}
+
+#safetySwitch:checked + .lever {
+    background-color: #EBCDE7; /* Replace with your desired color */
+}
+
+.navbar-title {
+    color:#662852;
+    font-family: "Impact";
+}
+
+.cat{
+    color:#662852;
+    font-family: "Impact";
+    font-size: 25;
+
+}
+
+.center {
+    text-align:center;
+}
+
+.navbar {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+    background-color: white;
+}
